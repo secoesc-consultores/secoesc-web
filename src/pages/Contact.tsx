@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import { client } from '../sanity';
 
 const getFileUrl = (ref: string) => {
@@ -10,6 +12,7 @@ const getFileUrl = (ref: string) => {
 export default function Contact() {
   const [datos, setDatos] = useState<any>(null);
   const [ui, setUi]       = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -18,16 +21,20 @@ export default function Contact() {
     ]).then(([data, uiData]) => {
       setDatos(data);
       setUi(uiData);
+      setLoading(false);
     });
   }, []);
 
-  if (!datos) return (
-    <div className="py-24 text-center animate-pulse text-primary font-bold tracking-widest uppercase">
-      Cargando información de contacto...
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-surface-lowest relative overflow-hidden">
+      <div className="absolute inset-0 bg-blueprint opacity-10" />
+      <div className="flex flex-col items-center gap-6 relative z-10 transition-all duration-1000">
+         <div className="w-16 h-1 bg-primary animate-pulse rounded-full" />
+         <span className="text-[10px] font-black tracking-[0.6em] text-primary uppercase animate-pulse">Cargando Contacto...</span>
+      </div>
     </div>
   );
 
-  // Textos con fallbacks
   const t = {
     etiqueta:             ui?.contactoEtiqueta              || 'Conecta con nosotros',
     tituloSede:           ui?.contactoTituloSedePrincipal   || 'Sede Principal',
@@ -43,91 +50,139 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen pb-16">
-      <section className="px-8 py-12 md:py-20 max-w-7xl mx-auto">
-        <div className="flex flex-col items-start gap-4 mb-16">
-          <span className="text-primary font-bold tracking-widest text-xs uppercase border-l-4 border-primary pl-4">
+    <div className="bg-background min-h-screen pb-32">
+      {/* HEADER TÉCNICO */}
+      <section className="relative pt-32 pb-24 px-8 overflow-hidden border-b border-outline-variant/10 bg-surface-lowest">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        <div className="absolute inset-0 bg-blueprint opacity-[0.4]" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase mb-6 block border-l-4 border-primary pl-4"
+          >
             {t.etiqueta}
-          </span>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-on-surface leading-none font-headline">
+          </motion.span>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-6xl md:text-8xl font-black font-headline text-on-surface tracking-tighter mb-10 leading-[0.9] max-w-5xl"
+          >
             {datos.titulo || 'Construyamos el futuro juntos.'}
-          </h1>
+          </motion.h1>
+          <div className="w-24 h-1 bg-primary" />
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Detalles de Contacto */}
-          <div className="space-y-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="p-8 bg-surface-container-low rounded-xl border-l-2 border-primary group hover:border-tertiary transition-colors duration-300">
-                <span className="material-symbols-outlined text-primary mb-4 group-hover:text-tertiary transition-colors">location_on</span>
-                <h3 className="text-lg font-bold mb-2 font-headline">{t.tituloSede}</h3>
-                <p className="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line">{datos.direccion}</p>
-              </div>
-              <div className="p-8 bg-surface-container-low rounded-xl border-l-2 border-primary group hover:border-secondary transition-colors duration-300">
-                <span className="material-symbols-outlined text-primary mb-4 group-hover:text-secondary transition-colors">contact_support</span>
-                <h3 className="text-lg font-bold mb-2 font-headline">{t.tituloContactoDir}</h3>
-                <p className="text-sm text-on-surface-variant leading-relaxed font-medium">{datos.email}</p>
-                {(datos.telefonos ?? (datos.telefono ? [{ numero: datos.telefono }] : [])).map((tel: any, i: number) => (
-                  <p key={i} className="text-sm text-on-surface-variant leading-relaxed">
-                    {tel.etiqueta && <span className="font-bold text-primary mr-1">{tel.etiqueta}:</span>}
-                    {tel.numero}
-                  </p>
-                ))}
-              </div>
+      <section className="px-8 mt-24 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-start">
+          
+          {/* DETALLES DE CONTACTO (TECH LAYOUT) */}
+          <div className="space-y-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="p-10 glass rounded-[2rem] border-l-4 border-primary shadow-premium group hover:-translate-y-2 transition-transform duration-500"
+              >
+                <div className="w-14 h-14 bg-primary/10 flex items-center justify-center rounded-xl mb-8 group-hover:bg-primary group-hover:text-surface transition-all duration-500">
+                  <MapPin className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-black font-headline mb-4 tracking-tight">{t.tituloSede}</h3>
+                <p className="text-base text-on-surface-variant leading-relaxed font-medium italic opacity-80 whitespace-pre-line">{datos.direccion}</p>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="p-10 glass rounded-[2rem] border-l-4 border-primary shadow-premium group hover:-translate-y-2 transition-transform duration-500"
+              >
+                <div className="w-14 h-14 bg-primary/10 flex items-center justify-center rounded-xl mb-8 group-hover:bg-primary group-hover:text-surface transition-all duration-500">
+                  <Mail className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-black font-headline mb-4 tracking-tight">{t.tituloContactoDir}</h3>
+                <p className="text-base text-on-surface-variant font-bold text-primary mb-4 break-words">{datos.email}</p>
+                <div className="space-y-3">
+                  {(datos.telefonos ?? (datos.telefono ? [{ numero: datos.telefono }] : [])).map((tel: any, i: number) => (
+                    <p key={i} className="text-sm text-on-surface-variant font-medium flex items-center gap-2">
+                       <Phone className="w-3 h-3 text-primary/40" />
+                      {tel.etiqueta && <span className="text-primary/60 font-black uppercase text-[9px] tracking-widest">{tel.etiqueta}:</span>}
+                      {tel.numero}
+                    </p>
+                  ))}
+                </div>
+              </motion.div>
             </div>
 
-            {/* Mapa / Video */}
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-sm group border border-slate-200">
+            {/* MAPA / VIDEO WITH FRAME */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-ambient group ring-8 ring-surface-lowest"
+            >
+              <div className="absolute inset-0 bg-blueprint opacity-10 pointer-events-none z-10" />
               {datos.videoMapa ? (
                 <video
                   autoPlay loop muted playsInline
-                  className="w-full h-full object-cover transition-all duration-700"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
                   src={getFileUrl(datos.videoMapa.asset._ref)}
                 />
               ) : (
                 <img
                   alt="Ubicación SECOESC"
-                  className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
-                  src={datos.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDJiZzqvii2461kfzHsyiq_8mJyQJG3C8_LgB7L7Iw1sv7N_s2PRu3id7n5ox3c5FfKytozoY2S_xdEYUOKAGpv7FvM6d2-AFT-jnO8ePbXWL34F7bohYa_APkuJrG1sQ2XEy1aHEYbWGRys9o3Yxy68UjTNtv0U5ixTDXGhTDceDrKVkL6YLpbXI-5_3qoVApkLnoVqJGPaTeaut7vVZEJFdQQGwa-vrQgoCkbVRLMXDbr3Np8q2RJRBbloGQx0rSV8s-IiyHgnA'}
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+                  src={datos.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...'}
                 />
               )}
-              <div className="absolute inset-0 bg-primary/5 mix-blend-multiply" />
-            </div>
+              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
+            </motion.div>
           </div>
 
-          {/* Formulario */}
-          <div className="bg-surface-container-low p-8 md:p-12 rounded-xl border border-slate-200/60">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2 font-headline">{t.tituloFormulario}</h2>
-              <p className="text-sm text-on-surface-variant">{t.subtituloFormulario}</p>
+          {/* FORMULARIO (PREMIUM GLASS) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="glass p-12 md:p-16 rounded-[3rem] border-primary/20 shadow-ambient"
+          >
+            <div className="mb-12">
+              <h2 className="text-4xl font-black mb-4 font-headline tracking-tighter leading-none">{t.tituloFormulario}</h2>
+              <p className="text-lg text-on-surface-variant font-medium opacity-80">{t.subtituloFormulario}</p>
             </div>
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500">{t.labelNombre}</label>
-                  <input className="bg-transparent border-0 border-b-2 border-outline focus:ring-0 focus:border-primary px-0 py-2 text-sm transition-all outline-none" placeholder="Juan" type="text" />
+            <form className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="flex flex-col gap-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelNombre}</label>
+                  <input className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder="Juan" type="text" />
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold uppercase tracking-widest text-slate-500">{t.labelApellido}</label>
-                  <input className="bg-transparent border-0 border-b-2 border-outline focus:ring-0 focus:border-primary px-0 py-2 text-sm transition-all outline-none" placeholder="Pérez" type="text" />
+                <div className="flex flex-col gap-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelApellido}</label>
+                  <input className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder="Pérez" type="text" />
                 </div>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">{t.labelEmail}</label>
-                <input className="bg-transparent border-0 border-b-2 border-outline focus:ring-0 focus:border-primary px-0 py-2 text-sm transition-all outline-none" placeholder="juan.perez@empresa.com" type="email" />
+              <div className="flex flex-col gap-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelEmail}</label>
+                <input className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder="juan.perez@empresa.com" type="email" />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">{t.labelMensaje}</label>
-                <textarea className="bg-transparent border-0 border-b-2 border-outline focus:ring-0 focus:border-primary px-0 py-2 text-sm transition-all resize-none outline-none" placeholder={t.placeholderMensaje} rows={4} />
+              <div className="flex flex-col gap-3">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelMensaje}</label>
+                <textarea className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all resize-none outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder={t.placeholderMensaje} rows={4} />
               </div>
               <button
-                className="w-full bg-primary text-on-primary py-4 px-8 rounded-lg text-sm font-bold uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:bg-primary-dim transition-all flex items-center justify-center gap-2"
+                className="w-full bg-primary text-on-surface py-5 px-10 rounded-2xl text-xs font-black uppercase tracking-[0.3em] shadow-premium hover:shadow-ambient hover:bg-primary-dim transition-all duration-300 flex items-center justify-center gap-4 group"
                 type="button"
               >
-                {t.botonEnviar}
+                {t.botonEnviar} <Send className="w-5 h-5 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
               </button>
             </form>
-          </div>
+          </motion.div>
+
         </div>
       </section>
     </div>

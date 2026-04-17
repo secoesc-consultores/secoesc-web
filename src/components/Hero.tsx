@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { urlFor } from '../sanity';
 
 interface HeroProps {
@@ -30,42 +31,77 @@ export default function Hero({ data }: HeroProps) {
   };
 
   return (
-    <section className="relative h-[600px] flex items-center overflow-hidden bg-surface border-b border-outline-variant/10">
-      <div className="absolute inset-0 z-0 bg-surface">
+    <section className="relative min-h-[700px] flex items-center overflow-hidden bg-surface border-b border-outline-variant/10">
+      {/* Fondo con Cuadrícula Técnica */}
+      <div className="absolute inset-0 z-0 bg-blueprint opacity-[0.4]" />
+      
+      <div className="absolute inset-0 z-0">
         {data?.imagenFondo && (
-          <img
-            className="w-full h-full object-cover opacity-20 grayscale"
+          <motion.img
+            initial={{ scale: 1.1, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.15 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            className="w-full h-full object-cover grayscale"
             alt="Estructura arquitectónica SECOESC"
             src={urlFor(data.imagenFondo).url()}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/80 to-transparent" />
       </div>
+
       <div className="relative z-10 px-8 max-w-7xl mx-auto w-full">
-        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-[10px] font-black tracking-[0.3em] uppercase mb-4 border-l-2 border-primary">
-          {data?.etiqueta || 'Ingeniería & Consultoría'}
-        </span>
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-on-surface max-w-4xl leading-[1.1] font-headline mb-6">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <span className="inline-block px-4 py-1 bg-primary/10 text-primary text-[10px] font-black tracking-[0.3em] uppercase mb-6 border-l-4 border-primary">
+            {data?.etiqueta || 'Ingeniería & Consultoría'}
+          </span>
+        </motion.div>
+
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-6xl md:text-8xl font-black tracking-tighter text-on-surface max-w-5xl leading-[0.95] font-headline mb-8"
+        >
           {renderTitulo()}
-        </h1>
-        <p className="text-on-surface-variant text-lg max-w-xl font-medium leading-relaxed mb-10">
+        </motion.h1>
+
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-on-surface-variant text-xl max-w-2xl font-medium leading-relaxed mb-12"
+        >
           {data?.descripcion || 'Elevamos los estándares de seguridad estructural mediante precisión analítica, innovación tecnológica y una visión integral de cada proyecto.'}
-        </p>
-        <div className="flex gap-4">
+        </motion.p>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="flex flex-wrap gap-6"
+        >
           <Link
             to={data?.enlaceBotonPrimario || '/contacto'}
-            className="bg-primary text-on-surface px-8 py-4 rounded-md text-xs font-black uppercase tracking-widest hover:shadow-ambient transition-all"
+            className="bg-primary hover:bg-primary-dim text-on-surface px-10 py-5 rounded-lg text-sm font-black uppercase tracking-widest shadow-premium hover:shadow-ambient transition-all duration-300"
           >
             {data?.textoBotonPrimario || 'Agendar Consultoría'}
           </Link>
           <Link
             to={data?.enlaceBotonSecundario || '/servicios'}
-            className="bg-surface-low border border-outline-variant text-on-surface px-8 py-4 rounded-md text-xs font-black uppercase tracking-widest hover:border-primary transition-all"
+            className="glass-dark text-white px-10 py-5 rounded-lg text-sm font-black uppercase tracking-widest hover:bg-white/10 transition-all duration-300"
           >
             {data?.textoBotonSecundario || 'Ver Soluciones'}
           </Link>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Elemento Decorativo: Línea de Tiempo / Regla Digital */}
+      <div className="absolute bottom-0 right-0 w-1/3 h-px bg-gradient-to-l from-primary via-primary/30 to-transparent hidden lg:block" />
+      <div className="absolute top-0 right-12 w-px h-full bg-blueprint opacity-20 hidden lg:block" />
     </section>
   );
 }

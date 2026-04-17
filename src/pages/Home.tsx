@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   BarChart,
   PenTool,
@@ -8,7 +9,8 @@ import {
   MapPin,
   Zap,
   Search,
-  Shield
+  Shield,
+  ArrowRight
 } from 'lucide-react';
 import { client, urlFor } from '../sanity';
 
@@ -32,6 +34,7 @@ export default function Home() {
   const [hero, setHero]                     = useState<any>(null);
   const [excelencia, setExcelencia]         = useState<any>(null);
   const [ui, setUi]                         = useState<any>(null);
+  const [loading, setLoading]                 = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -50,10 +53,11 @@ export default function Home() {
       setClientes(clientesData);
       setMetodologia(metodologiaData);
       setProyectos(proyectosData.length > 0 ? proyectosData : []);
-      setCta(ctaData);
-      setHero(heroData);
-      setExcelencia(excelenciaData);
-      setUi(uiData);
+      setCta(ctaData || null);
+      setHero(heroData || null);
+      setExcelencia(excelenciaData || null);
+      setUi(uiData || null);
+      setLoading(false);
 
       if (proyectosData.length === 0) {
         client.fetch(`*[_type == "proyecto"] | order(orden asc) [0...3]`).then(setProyectos);
@@ -61,7 +65,17 @@ export default function Home() {
     });
   }, []);
 
-  // Textos de UI con fallbacks
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-surface-lowest relative overflow-hidden">
+      <div className="absolute inset-0 bg-blueprint opacity-10" />
+      <div className="flex flex-col items-center gap-6 relative z-10 transition-all duration-1000">
+         <div className="w-16 h-1 bg-primary animate-pulse rounded-full" />
+         <span className="text-[10px] font-black tracking-[0.6em] text-primary uppercase animate-pulse">Inyectando Ingeniería...</span>
+      </div>
+    </div>
+  );
+
+  // Textos de UI con fallbacks (Ahora solo se ven si ui realmente no tiene esos campos)
   const t = {
     labelClientes:    ui?.homeLabelClientes    || 'Instituciones que confían en nuestra ingeniería',
     tituloCasos:      ui?.homeTituloProyectos  || 'Casos de Éxito',
@@ -76,20 +90,33 @@ export default function Home() {
 
       {/* CLIENTES / ALIANZAS ESTRATÉGICAS */}
       {clientes.length > 0 && (
-        <section className="py-12 bg-surface-lowest border-b border-outline-variant/10">
+        <section className="py-20 bg-surface-lowest border-b border-outline-variant/10 relative overflow-hidden">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-outline-variant to-transparent" />
           <div className="px-8 max-w-7xl mx-auto text-center">
-            <p className="text-[10px] font-black tracking-[0.2em] text-on-surface-variant uppercase mb-8">
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-[10px] font-black tracking-[0.4em] text-on-surface-variant uppercase mb-12"
+            >
               {t.labelClientes}
-            </p>
-            <div className="flex flex-wrap justify-center items-center gap-12 opacity-60">
+            </motion.p>
+            <div className="flex flex-wrap justify-center items-center gap-16 opacity-40 hover:opacity-100 transition-opacity duration-1000">
               {clientes.map((cliente, i) => (
-                <div key={i} className="w-32 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0">
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="w-32 grayscale hover:grayscale-0 transition-all duration-500 cursor-pointer"
+                >
                   {cliente.logo ? (
                     <img src={urlFor(cliente.logo).url()} alt={cliente.nombre} className="w-full h-auto object-contain" />
                   ) : (
                     <span className="font-bold text-sm">{cliente.nombre}</span>
                   )}
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -101,43 +128,65 @@ export default function Home() {
 
       {/* CASOS DE ÉXITO (PROYECTOS) */}
       {proyectos.length > 0 && (
-        <section className="py-24 bg-surface-lowest border-b border-outline-variant/10">
-          <div className="px-8 max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-black tracking-tight text-on-surface font-headline">{t.tituloCasos}</h2>
-              <div className="w-16 h-1 bg-primary mx-auto mt-6" />
-              <p className="mt-6 text-on-surface-variant max-w-2xl mx-auto">{t.descCasos}</p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section className="py-32 bg-surface-lowest relative overflow-hidden">
+          <div className="absolute inset-0 bg-blueprint opacity-[0.2] pointer-events-none" />
+          <div className="px-8 max-w-7xl mx-auto relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-24"
+            >
+              <span className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase mb-4 block">Portafolio Seleccionado</span>
+              <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-on-surface font-headline leading-none">{t.tituloCasos}</h2>
+              <div className="w-24 h-1 bg-primary mx-auto mt-8" />
+              <p className="mt-8 text-on-surface-variant text-xl max-w-2xl mx-auto font-medium">{t.descCasos}</p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
               {proyectos.map((proyecto, i) => (
-                <div key={i} className="bg-surface border border-outline-variant/30 rounded-xl overflow-hidden group hover:border-primary/50 transition-all">
-                  <div className="h-48 overflow-hidden relative">
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-surface border border-outline-variant/30 rounded-2xl overflow-hidden group hover:border-primary/50 transition-all duration-500 shadow-premium hover:shadow-ambient"
+                >
+                  <div className="h-64 overflow-hidden relative">
                     {proyecto.imagen ? (
-                      <img src={urlFor(proyecto.imagen).url()} alt={proyecto.titulo} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105" />
+                      <img src={urlFor(proyecto.imagen).url()} alt={proyecto.titulo} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" />
                     ) : (
                       <div className="w-full h-full bg-surface-low flex items-center justify-center">
                         <span className="text-outline-variant">Sin imagen</span>
                       </div>
                     )}
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <div className="p-8">
-                    <h3 className="text-xl font-bold font-headline mb-2">{proyecto.titulo}</h3>
-                    <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+                  <div className="p-10">
+                    <div className="flex items-center gap-2 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-4">
                       <MapPin className="w-3 h-3" /> {proyecto.ubicacion}
                     </div>
-                    <div className="space-y-4">
-                      <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant block mb-1">{t.labelDesafio}</span>
-                        <p className="text-sm text-on-surface-variant leading-relaxed">{proyecto.desafio}</p>
+                    <h3 className="text-2xl font-black font-headline mb-6 tracking-tight group-hover:text-primary transition-colors">{proyecto.titulo}</h3>
+                    <div className="space-y-6">
+                      <div className="p-4 bg-surface-low rounded-lg border-l-2 border-outline-variant/30 group-hover:border-primary transition-colors">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-on-surface-variant/50 block mb-2">{t.labelDesafio}</span>
+                        <p className="text-sm text-on-surface-variant leading-relaxed line-clamp-2">{proyecto.desafio}</p>
                       </div>
                       <div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant block mb-1">{t.labelSolucion}</span>
-                        <p className="text-sm text-on-surface-variant leading-relaxed">{proyecto.solucion}</p>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-primary block mb-2">{t.labelSolucion}</span>
+                        <p className="text-sm text-on-surface-variant leading-relaxed line-clamp-3 font-medium">{proyecto.solucion}</p>
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
+            </div>
+            
+            <div className="mt-20 text-center">
+              <Link to="/portafolio" className="inline-flex items-center gap-4 text-xs font-black uppercase tracking-widest text-on-surface hover:text-primary transition-all group">
+                Explorar portafolio completo <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+              </Link>
             </div>
           </div>
         </section>
@@ -145,25 +194,36 @@ export default function Home() {
 
       {/* METODOLOGÍA DINÁMICA */}
       {metodologia && (
-        <section className="py-24 bg-surface">
-          <div className="px-8 max-w-7xl mx-auto text-center mb-16">
-            <h2 className="text-4xl font-black tracking-tight text-on-surface font-headline">
-              {metodologia.tituloSeccion || 'Metodología de Trabajo'}
+        <section className="py-32 bg-surface relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-surface-lowest/50 to-transparent" />
+          <div className="px-8 max-w-7xl mx-auto text-center mb-20 relative z-10">
+            <span className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase mb-4 block">Workflow</span>
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-on-surface font-headline">
+              {metodologia.tituloSeccion || 'Metodología.'}
             </h2>
-            <div className="w-16 h-1 bg-primary mx-auto mt-6" />
+            <div className="w-12 h-1 bg-primary mx-auto mt-8" />
           </div>
-          <div className="px-8 max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="px-8 max-w-7xl mx-auto relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {metodologia.pasos?.map((paso: any, i: number) => {
                 const IconComponent = IconStepMap[paso.icono] || BarChart;
                 const stepNum = (i + 1).toString().padStart(2, '0');
                 return (
-                  <div key={i} className="group bg-surface-lowest border border-outline-variant/20 p-8 rounded-xl relative overflow-hidden hover:border-primary/50 transition-all duration-300">
-                    <div className="text-7xl font-black text-on-surface/5 absolute -right-4 -bottom-4 select-none font-headline">{stepNum}</div>
-                    <IconComponent className="w-8 h-8 text-primary mb-6" />
-                    <h4 className="text-lg font-bold mb-3 tracking-tight font-headline">{paso.titulo}</h4>
-                    <p className="text-sm text-on-surface-variant leading-relaxed relative z-10">{paso.descripcion}</p>
-                  </div>
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="group bg-surface-lowest border border-outline-variant/20 p-10 rounded-2xl relative overflow-hidden hover:border-primary/50 transition-all duration-500 hover:-translate-y-2 shadow-sm hover:shadow-ambient"
+                  >
+                    <div className="text-8xl font-black text-on-surface/[0.03] absolute -right-4 -bottom-4 select-none font-headline group-hover:text-primary/[0.05] transition-colors">{stepNum}</div>
+                    <div className="w-14 h-14 bg-surface-low rounded-xl flex items-center justify-center text-primary mb-8 group-hover:bg-primary group-hover:text-surface transition-all duration-500">
+                      <IconComponent className="w-7 h-7" />
+                    </div>
+                    <h4 className="text-2xl font-black mb-4 tracking-tight font-headline group-hover:text-primary transition-colors">{paso.titulo}</h4>
+                    <p className="text-on-surface-variant leading-relaxed relative z-10 font-medium">{paso.descripcion}</p>
+                  </motion.div>
                 );
               })}
             </div>
@@ -173,12 +233,19 @@ export default function Home() {
 
       {/* EXCELENCIA TÉCNICA */}
       {excelencia && (
-        <section className="py-24 bg-surface-lowest border-y border-outline-variant/10">
-          <div className="px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
-            <div className="lg:w-1/2 overflow-hidden rounded-xl bg-surface">
+        <section className="py-32 bg-surface-lowest border-y border-outline-variant/10 relative overflow-hidden">
+          <div className="absolute inset-0 bg-blueprint opacity-[0.1]" />
+          <div className="px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-24 relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="lg:w-1/2 overflow-hidden rounded-3xl bg-surface shadow-2xl relative group"
+            >
+              <div className="absolute inset-0 border-8 border-surface-lowest/20 z-10 pointer-events-none" />
               {excelencia.imagenPrincipal ? (
                 <img
-                  className="w-full aspect-[4/3] object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                  className="w-full aspect-[4/3] object-cover grayscale group-hover:grayscale-0 transition-all duration-[2s] group-hover:scale-105"
                   alt={excelencia.titulo}
                   src={urlFor(excelencia.imagenPrincipal).url()}
                 />
@@ -187,20 +254,42 @@ export default function Home() {
                   <div className="w-16 h-1 bg-primary/20" />
                 </div>
               )}
-            </div>
+            </motion.div>
             <div className="lg:w-1/2">
-              <h2 className="text-4xl font-black tracking-tight mb-10 font-headline">{excelencia.titulo}</h2>
-              <div className="space-y-8">
+              <motion.span 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase mb-6 block"
+              >
+                Valores de Marca
+              </motion.span>
+              <motion.h2 
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="text-5xl md:text-7xl font-black tracking-tighter mb-12 font-headline leading-none"
+              >
+                {excelencia.titulo}
+              </motion.h2>
+              <div className="grid grid-cols-1 gap-10">
                 {excelencia.pilares?.map((pilar: any, i: number) => (
-                  <div key={i} className="flex gap-6 items-start group">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-surface border border-outline-variant flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
-                      <CheckCircle className="w-6 h-6" />
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="flex gap-8 items-start group"
+                  >
+                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-surface-low border border-outline-variant/50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-all duration-500 shadow-sm">
+                      <CheckCircle className="w-7 h-7" />
                     </div>
                     <div>
-                      <h5 className="font-bold text-lg mb-2 font-headline group-hover:text-primary transition-colors">{pilar.titulo}</h5>
-                      <p className="text-on-surface-variant text-sm leading-relaxed">{pilar.descripcion}</p>
+                      <h5 className="font-black text-2xl mb-3 font-headline group-hover:text-primary transition-colors tracking-tight">{pilar.titulo}</h5>
+                      <p className="text-on-surface-variant text-lg leading-relaxed font-medium">{pilar.descripcion}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -210,17 +299,25 @@ export default function Home() {
 
       {/* CTA DINÁMICO */}
       {cta && (
-        <section className="py-20 bg-surface">
-          <div className="max-w-4xl mx-auto px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-black font-headline mb-6 tracking-tight">{cta.titulo}</h2>
-            <p className="text-on-surface-variant mb-10 text-lg">{cta.descripcion}</p>
-            <Link
-              to={cta.enlaceBoton || '/contacto'}
-              className="inline-block bg-primary text-on-surface px-10 py-4 rounded-md font-bold uppercase tracking-widest text-sm hover:shadow-ambient transition-all"
-            >
-              {cta.textoBoton}
-            </Link>
-          </div>
+        <section className="py-32 bg-surface relative">
+          <div className="absolute inset-0 bg-blueprint opacity-[0.3]" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-5xl mx-auto px-8 relative z-10"
+          >
+            <div className="glass p-16 md:p-24 rounded-[3rem] text-center border-primary/20 shadow-ambient">
+              <h2 className="text-4xl md:text-6xl font-black font-headline mb-8 tracking-tighter leading-none">{cta.titulo}</h2>
+              <p className="text-on-surface-variant mb-12 text-xl max-w-2xl mx-auto font-medium">{cta.descripcion}</p>
+              <Link
+                to={cta.enlaceBoton || '/contacto'}
+                className="inline-block bg-primary hover:bg-primary-dim text-on-surface px-12 py-5 rounded-xl font-black uppercase tracking-[0.2em] text-sm shadow-premium hover:shadow-ambient transition-all duration-300"
+              >
+                {cta.textoBoton}
+              </Link>
+            </div>
+          </motion.div>
         </section>
       )}
     </div>

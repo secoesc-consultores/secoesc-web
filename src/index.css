@@ -25,4 +25,48 @@
   /* Tokens para el botón primario */
   --color-on-primary: #ffffff;
   --color-primary-dim: #3db8f0;
+
+  /* Patrones y Texturas Técnicas */
+  --blueprint-grid: radial-gradient(var(--color-outline-variant) 1px, transparent 1px);
+  --blueprint-size: 24px 24px;
 }
+
+@layer utilities {
+  .bg-blueprint {
+    background-image: var(--blueprint-grid);
+    background-size: var(--blueprint-size);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(25, 30, 31, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .shadow-ambient {
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-premium {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Animaciones Globales */
+@keyframes soft-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-soft-entry {
+  animation: soft-fade-in 0.8s ease-out forwards;
+}
+
