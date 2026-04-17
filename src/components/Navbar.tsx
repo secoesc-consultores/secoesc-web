@@ -18,6 +18,9 @@ export default function Navbar() {
       setBranding(brandingData);
       setUi(uiData);
       setLoading(false);
+    }).catch(err => {
+      console.error("Error cargando Navbar:", err);
+      setLoading(false);
     });
   }, []);
 

@@ -62,6 +62,9 @@ export default function Home() {
       if (proyectosData.length === 0) {
         client.fetch(`*[_type == "proyecto"] | order(orden asc) [0...3]`).then(setProyectos);
       }
+    }).catch(err => {
+      console.error("Error cargando Home:", err);
+      setLoading(false);
     });
   }, []);
 

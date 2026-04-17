@@ -19,6 +19,9 @@ export default function Portfolio() {
       setProyectos(data);
       setUi(uiData);
       setLoading(false);
+    }).catch(err => {
+      console.error("Error cargando Portafolio:", err);
+      setLoading(false);
     });
   }, []);
 
