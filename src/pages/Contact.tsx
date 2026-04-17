@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Mail, MapPin, Phone, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { client, urlFor } from '../sanity';
+import emailjs from '@emailjs/browser';
 
 const getFileUrl = (ref: string) => {
   if (!ref) return '';
@@ -14,6 +13,10 @@ export default function Contact() {
   const [ui, setUi]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // Estados del Formulario
+  const [form, setForm] = useState({ nombre: '', apellido: '', email: '', mensaje: '' });
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
   useEffect(() => {
     Promise.all([
       client.fetch(`*[_type == "contacto"][0]`),
@@ -24,6 +27,40 @@ export default function Contact() {
       setLoading(false);
     });
   }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+
+    // CONFIGURACIÓN EMAILJS
+    // NOTA: Reemplazar estos IDs con los reales del usuario en EmailJS
+    const SERVICE_ID  = "service_secoesc";
+    const TEMPLATE_ID = "template_secoesc";
+    const PUBLIC_KEY  = "user_secoesc_public_key";
+
+    const templateParams = {
+      from_name: `${form.nombre} ${form.apellido}`,
+      from_email: form.email,
+      message: form.mensaje,
+      to_name: "SECOESC Team",
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+      .then(() => {
+        setStatus('success');
+        setForm({ nombre: '', apellido: '', email: '', mensaje: '' });
+        setTimeout(() => setStatus('idle'), 5000);
+      })
+      .catch((err) => {
+        console.error('Error al enviar:', err);
+        setStatus('error');
+        setTimeout(() => setStatus('idle'), 5000);
+      });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-surface-lowest relative overflow-hidden">
@@ -47,6 +84,8 @@ export default function Contact() {
     labelMensaje:         ui?.contactoLabelMensaje          || 'Mensaje',
     placeholderMensaje:   ui?.contactoPlaceholderMensaje    || '¿Cómo podemos ayudarle?',
     botonEnviar:          ui?.contactoBotonEnviar           || 'Enviar Solicitud',
+    msgSuccess:           '¡Mensaje enviado con éxito! Nos pondremos en contacto pronto.',
+    msgError:             'Hubo un problema al enviar el mensaje. Por favor intente de nuevo.',
   };
 
   return (
@@ -155,36 +194,93 @@ export default function Contact() {
               <h2 className="text-4xl font-black mb-4 font-headline tracking-tighter leading-none">{t.tituloFormulario}</h2>
               <p className="text-lg text-on-surface-variant font-medium opacity-80">{t.subtituloFormulario}</p>
             </div>
-            <form className="space-y-8">
+            
+            <form onSubmit={handleSubmit} className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="flex flex-col gap-3">
                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelNombre}</label>
-                  <input className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder="Juan" type="text" />
+                  <input 
+                    name="nombre"
+                    value={form.nombre}
+                    onChange={handleChange}
+                    required
+                    className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" 
+                    placeholder="Juan" 
+                    type="text" 
+                  />
                 </div>
                 <div className="flex flex-col gap-3">
                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelApellido}</label>
-                  <input className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder="Pérez" type="text" />
+                  <input 
+                    name="apellido"
+                    value={form.apellido}
+                    onChange={handleChange}
+                    required
+                    className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" 
+                    placeholder="Pérez" 
+                    type="text" 
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelEmail}</label>
-                <input className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder="juan.perez@empresa.com" type="email" />
+                <input 
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                  className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" 
+                  placeholder="juan.perez@empresa.com" 
+                  type="email" 
+                />
               </div>
               <div className="flex flex-col gap-3">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">{t.labelMensaje}</label>
-                <textarea className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all resize-none outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" placeholder={t.placeholderMensaje} rows={4} />
+                <textarea 
+                  name="mensaje"
+                  value={form.mensaje}
+                  onChange={handleChange}
+                  required
+                  className="bg-surface-lowest/50 border-0 border-b-2 border-primary/20 focus:border-primary px-0 py-4 text-base transition-all resize-none outline-none font-medium text-on-surface placeholder:text-on-surface-variant/30" 
+                  placeholder={t.placeholderMensaje} 
+                  rows={4} 
+                />
               </div>
+              
               <button
-                className="w-full bg-primary text-on-surface py-5 px-10 rounded-2xl text-xs font-black uppercase tracking-[0.3em] shadow-premium hover:shadow-ambient hover:bg-primary-dim transition-all duration-300 flex items-center justify-center gap-4 group"
-                type="button"
+                disabled={status === 'sending'}
+                className="w-full bg-primary text-on-surface py-5 px-10 rounded-2xl text-xs font-black uppercase tracking-[0.3em] shadow-premium hover:shadow-ambient hover:bg-primary-dim transition-all duration-300 flex items-center justify-center gap-4 group disabled:opacity-50 disabled:cursor-not-allowed"
+                type="submit"
               >
-                {t.botonEnviar} <Send className="w-5 h-5 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
+                {status === 'sending' ? (
+                  <>Cargando... <Loader2 className="w-5 h-5 animate-spin" /></>
+                ) : (
+                  <>{t.botonEnviar} <Send className="w-5 h-5 group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" /></>
+                )}
               </button>
+
+              {/* MENSAGES DE ESTADO */}
+              <AnimatePresence>
+                {status === 'success' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-3 text-green-500 font-bold p-6 bg-green-500/10 rounded-2xl border border-green-500/20">
+                    <CheckCircle2 className="w-6 h-6" /> {t.msgSuccess}
+                  </motion.div>
+                )}
+                {status === 'error' && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-3 text-red-500 font-bold p-6 bg-red-500/10 rounded-2xl border border-red-500/20">
+                    <AlertCircle className="w-6 h-6" /> {t.msgError}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
             </form>
           </motion.div>
 
         </div>
       </section>
     </div>
+  );
+}
+>
   );
 }
