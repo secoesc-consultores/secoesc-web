@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { client, urlFor } from './sanity';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Nosotros from './pages/Nosotros';
 import Services from './pages/Services';
@@ -27,6 +28,7 @@ export default function App() {
   }, []);
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-background text-on-surface font-sans selection:bg-primary/30">
         <Navbar />
         <main className="pt-20">
