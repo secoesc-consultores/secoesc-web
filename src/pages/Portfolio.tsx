@@ -113,8 +113,15 @@ export default function Portfolio() {
                   <p className="text-sm text-on-surface-variant line-clamp-3">{proy.solucion}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-on-surface-variant/60">
-                <MapPin className="w-4 h-4 text-primary" /> {proy.ubicacion}
+              <div className="flex items-center gap-4 text-xs font-bold text-on-surface-variant/60">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary" /> {proy.ubicacion}
+                </div>
+                {proy.fecha && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-primary" /> {proy.fecha}
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
@@ -148,8 +155,13 @@ export default function Portfolio() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-10">
                 <h3 className="text-3xl font-black font-headline text-on-surface mb-2">{proy.titulo}</h3>
-                <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-primary">
+                <div className="flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-widest text-primary">
                   <span>{proy.ubicacion}</span>
+                  {proy.fecha && (
+                    <span className="flex items-center gap-2">
+                      <Calendar className="w-3 h-3" /> {proy.fecha}
+                    </span>
+                  )}
                   <div className="flex items-center gap-2 bg-primary/20 px-3 py-1 rounded-full">
                     <Expand className="w-3 h-3" /> {t.verProyecto}
                   </div>

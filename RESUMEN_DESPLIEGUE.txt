@@ -1,0 +1,69 @@
+========================================================================
+       GUÍA DE MANTENIMIENTO Y ACTUALIZACIÓN - SECOESC WEB
+========================================================================
+
+¡Felicidades! Tu sitio web ya está desplegado en la nube. Aquí tienes 
+todo lo que necesitas saber para mantenerlo y actualizarlo.
+
+------------------------------------------------------------------------
+1. ¿CÓMO SE ACTUALIZA LA PÁGINA?
+------------------------------------------------------------------------
+
+A) ACTUALIZACIÓN DE DISEÑO O FUNCIONES (CÓDIGO):
+   Cada vez que hagas un cambio en los archivos de tu computadora:
+   1. Abre la terminal en la carpeta 'secoesc-web'.
+   2. Ejecuta estos comandos:
+      git add .
+      git commit -m "Descripción de lo que cambiaste"
+      git push origin main
+   
+   IMPORTANTE: Al hacer 'git push', Vercel detecta el cambio automáticamente 
+   y actualiza la web en menos de 1 minuto. No tienes que hacer nada más.
+
+B) ACTUALIZACIÓN DE TEXTOS, FOTOS O CLIENTES (CONTENIDO):
+   Si solo quieres cambiar información que ya está en el sistema:
+   1. Entra a tu URL de Sanity Studio (ej: secoesc-admin.sanity.studio).
+   2. Realiza los cambios en el panel de administrador.
+   3. Haz clic en "Publish".
+   
+   La web se actualizará sola sin necesidad de tocar código ni GitHub.
+
+------------------------------------------------------------------------
+2. DATOS IMPORTANTES DEL PROYECTO
+------------------------------------------------------------------------
+
+* Repositorio GitHub: https://github.com/secoesc-consultores/secoesc-web
+* Sanity Project ID: mtl1bf29
+* Dataset: production
+
+------------------------------------------------------------------------
+3. PASOS FINALES DE CONFIGURACIÓN (SI AÚN NO LOS HICISTE)
+------------------------------------------------------------------------
+
+A) AUTORIZAR A VERCEL EN SANITY (CORS):
+   Para que Sanity envíe fotos y textos a tu nueva web, debes darle permiso:
+   1. Entra en: https://www.sanity.io/manage
+   2. Selecciona tu proyecto 'secoesc'.
+   3. Ve a API > CORS origins.
+   4. Haz clic en "Add CORS origin".
+   5. Pega tu URL de Vercel (ej: https://secoesc-web.vercel.app).
+   6. Marca la casilla "Allow credentials" y guarda.
+
+B) SUBIR EL PANEL DE ADMINISTRACIÓN:
+   Si aún no has subido tu panel de control a la nube:
+   1. Abre la terminal en la carpeta 'secoesc'.
+   2. Ejecuta: npx sanity deploy
+   3. Elige un nombre para tu URL (ej: secoesc-admin).
+
+------------------------------------------------------------------------
+4. ¿QUÉ HACER SI ALGO FALLA?
+------------------------------------------------------------------------
+- Si la web se ve en blanco: Revisa el paso de CORS en Sanity.io.
+- Si Vercel da error de construcción: Revisa que no haya errores de 
+  sintaxis en el código antes de hacer el 'git push'.
+- Si Sanity no abre: Asegúrate de estar en la carpeta 'secoesc' cuando 
+  ejecutes comandos de Sanity.
+
+========================================================================
+Resumen generado por Antigravity AI para SECOESC - 17 de Abril, 2026.
+========================================================================
