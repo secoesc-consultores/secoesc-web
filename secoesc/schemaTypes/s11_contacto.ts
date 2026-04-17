@@ -74,7 +74,14 @@ export default {
       name: 'mapaUrl',
       type: 'url',
       title: 'URL de imagen de Mapa (Respaldo)',
-      description: 'Solo se usa si NO hay video. Puede ser un screenshot de Google Maps o imagen similar.',
+      description: 'Solo se usa si NO hay video y tampoco hay imagen subida manualmente.',
+    },
+    {
+      name: 'mapaImagen',
+      type: 'image',
+      title: '🖼️ Imagen del Mapa (Manual)',
+      description: 'Si se sube una imagen aquí, tendrá prioridad sobre la URL del mapa. El video siempre tiene la prioridad máxima.',
+      options: { hotspot: true },
     },
   ],
   preview: {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
-import { client } from '../sanity';
+import { client, urlFor } from '../sanity';
 
 const getFileUrl = (ref: string) => {
   if (!ref) return '';
@@ -137,7 +137,7 @@ export default function Contact() {
                 <img
                   alt="Ubicación SECOESC"
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-                  src={datos.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...'}
+                  src={datos.mapaImagen ? urlFor(datos.mapaImagen).url() : (datos.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...')}
                 />
               )}
               <div className="absolute inset-0 bg-primary/10 mix-blend-multiply opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
