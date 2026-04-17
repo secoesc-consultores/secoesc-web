@@ -25,6 +25,9 @@ export default function Contact() {
       setDatos(data);
       setUi(uiData);
       setLoading(false);
+    }).catch(err => {
+      console.error("Error cargando contacto:", err);
+      setLoading(false);
     });
   }, []);
 
@@ -158,7 +161,6 @@ export default function Contact() {
               </motion.div>
             </div>
 
-            {/* MAPA / VIDEO WITH FRAME */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -166,7 +168,7 @@ export default function Contact() {
               className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-ambient group ring-8 ring-surface-lowest"
             >
               <div className="absolute inset-0 bg-blueprint opacity-10 pointer-events-none z-10" />
-              {datos.videoMapa ? (
+              {datos?.videoMapa?.asset?._ref ? (
                 <video
                   autoPlay loop muted playsInline
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
@@ -176,7 +178,7 @@ export default function Contact() {
                 <img
                   alt="Ubicación SECOESC"
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-                  src={datos.mapaImagen ? urlFor(datos.mapaImagen).url() : (datos.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...')}
+                  src={datos?.mapaImagen ? urlFor(datos.mapaImagen).url() : (datos?.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...')}
                 />
               )}
               <div className="absolute inset-0 bg-primary/10 mix-blend-multiply opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
