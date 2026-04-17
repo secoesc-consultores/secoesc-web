@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: #5AC8FA;
+  --color-primary-dark: #006687;
+  --color-secondary: #c10015;
+  --color-tertiary: #006e2f;
+
+  --color-background: #f9f9f9;
+  --color-surface: #f6f8f8;
+  --color-surface-low: #f2f4f4;
+  --color-surface-lowest: #ffffff;
+  /* Alias usado en Contact y Portal — equivale a surface-low */
+  --color-surface-container-low: #f2f4f4;
+
+  --color-on-surface: #2d3435;
+  --color-on-surface-variant: #5A6061;
+  --color-outline-variant: rgba(117, 124, 125, 0.1);
+  --color-outline: rgba(117, 124, 125, 0.3);
+
+  /* Tokens para el botón primario */
+  --color-on-primary: #ffffff;
+  --color-primary-dim: #3db8f0;
+}
