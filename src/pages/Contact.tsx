@@ -34,9 +34,9 @@ export default function Contact() {
 
     // CONFIGURACIÓN EMAILJS
     // NOTA: Reemplazar estos IDs con los reales del usuario en EmailJS
-    const SERVICE_ID  = "service_secoesc";
-    const TEMPLATE_ID = "template_secoesc";
-    const PUBLIC_KEY  = "user_secoesc_public_key";
+    const SERVICE_ID  = "service_gyhg7xm";
+    const TEMPLATE_ID = "template_smbs4f8";
+    const PUBLIC_KEY  = "h_9asEVwpIOje47SO";
 
     const templateParams = {
       from_name: `${form.nombre} ${form.apellido}`,
