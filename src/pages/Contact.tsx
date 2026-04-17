@@ -18,6 +18,7 @@ export default function Contact() {
   // Estados del Formulario
   const [form, setForm] = useState({ nombre: '', apellido: '', email: '', mensaje: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [isHoveredMap, setIsHoveredMap] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -167,22 +168,28 @@ export default function Contact() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-ambient group ring-8 ring-surface-lowest"
+              onMouseEnter={() => setIsHoveredMap(true)}
+              onMouseLeave={() => setIsHoveredMap(false)}
+              className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden shadow-ambient group ring-8 ring-surface-lowest cursor-pointer"
             >
               <div className="absolute inset-0 bg-blueprint opacity-10 pointer-events-none z-10" />
-              {datos?.videoMapa?.asset?._ref ? (
-                <video
-                  autoPlay loop muted playsInline
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-                  src={getFileUrl(datos.videoMapa.asset._ref)}
-                />
-              ) : (
+              
+              {/* Imagen Principal */}
+              <img
+                alt="Ubicación SECOESC"
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isHoveredMap && datos?.mapaImagenHover ? 'opacity-0 scale-110 blur-sm' : 'opacity-100 scale-100'}`}
+                src={datos?.mapaImagen ? urlFor(datos.mapaImagen).url() : (datos?.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...')}
+              />
+
+              {/* Imagen Hover (Si existe) */}
+              {datos?.mapaImagenHover && (
                 <img
-                  alt="Ubicación SECOESC"
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-                  src={datos?.mapaImagen ? urlFor(datos.mapaImagen).url() : (datos?.mapaUrl || 'https://lh3.googleusercontent.com/aida-public/...')}
+                  alt="Ubicación Detalle"
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isHoveredMap ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+                  src={urlFor(datos.mapaImagenHover).url()}
                 />
               )}
+
               <div className="absolute inset-0 bg-primary/10 mix-blend-multiply opacity-0 group-hover:opacity-40 transition-opacity duration-1000" />
             </motion.div>
           </div>
