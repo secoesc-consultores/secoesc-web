@@ -391,6 +391,32 @@ export default {
       group: 'footer', initialValue: 'Oficina Central',
       validation: (Rule: any) => Rule.required().max(40),
     },
+
+    // ─── ⑨ BLOG ──────────────────────────────────────────────────────────────
+    {
+      name: 'blogHomeLabel',
+      type: 'string', title: 'Label sección Blog (Home)',
+      group: 'blog', initialValue: 'Divulgación Técnica',
+      validation: (Rule: any) => Rule.required().max(80),
+    },
+    {
+      name: 'blogHomeTitulo',
+      type: 'string', title: 'Título sección Blog (Home)',
+      group: 'blog', initialValue: 'Blog & Noticias',
+      validation: (Rule: any) => Rule.required().max(80),
+    },
+    {
+      name: 'blogHomeDesc',
+      type: 'string', title: 'Descripción sección Blog (Home)',
+      group: 'blog', initialValue: 'Perspectivas y conocimiento técnico de nuestro equipo de especialistas.',
+      validation: (Rule: any) => Rule.required().max(200),
+    },
+    {
+      name: 'blogHomeVerTodo',
+      type: 'string', title: 'Enlace "Ir al blog completo" (Home)',
+      group: 'blog', initialValue: 'Ir al blog completo',
+      validation: (Rule: any) => Rule.required().max(60),
+    },
   ],
 
   preview: {
