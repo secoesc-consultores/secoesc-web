@@ -30,6 +30,7 @@ export default function Home() {
   const [clientes, setClientes]             = useState<any[]>([]);
   const [proyectos, setProyectos]           = useState<any[]>([]);
   const [metodologia, setMetodologia]       = useState<any>(null);
+  const [blogPosts, setBlogPosts]           = useState<any[]>([]);
   const [cta, setCta]                       = useState<any>(null);
   const [hero, setHero]                     = useState<any>(null);
   const [excelencia, setExcelencia]         = useState<any>(null);
@@ -46,8 +47,11 @@ export default function Home() {
       client.fetch(`*[_type == "cta" && identificador == "Home"][0]`),
       client.fetch(`*[_type == "hero"][0]`),
       client.fetch(`*[_type == "excelencia"][0]`),
+      client.fetch(`*[_type == "blogPost"] | order(fechaPublicacion desc) [0...3] {
+        titulo, slug, categoria, imagenPortada, resumen, fechaPublicacion
+      }`),
       client.fetch(`*[_type == "textosUI"][0]`),
-    ]).then(([statsData, serviciosData, clientesData, proyectosData, metodologiaData, ctaData, heroData, excelenciaData, uiData]) => {
+    ]).then(([statsData, serviciosData, clientesData, proyectosData, metodologiaData, ctaData, heroData, excelenciaData, blogData, uiData]) => {
       setStats(statsData);
       setServicios(serviciosData);
       setClientes(clientesData);
@@ -56,6 +60,7 @@ export default function Home() {
       setCta(ctaData || null);
       setHero(heroData || null);
       setExcelencia(excelenciaData || null);
+      setBlogPosts(blogData);
       setUi(uiData || null);
       setLoading(false);
 
@@ -85,6 +90,10 @@ export default function Home() {
     descCasos:        ui?.homeDescProyectos    || 'Nuestra ingeniería aplicada en proyectos reales de alto impacto.',
     labelDesafio:     ui?.homeLabelDesafio     || 'Desafío',
     labelSolucion:    ui?.homeLabelSolucion    || 'Solución',
+    blogLabel:        ui?.blogHomeLabel        || 'Divulgación Técnica',
+    blogTitulo:       ui?.blogHomeTitulo       || 'Blog & Noticias',
+    blogDesc:         ui?.blogHomeDesc         || 'Perspectivas y conocimiento técnico de nuestro equipo de especialistas.',
+    blogVerTodo:      ui?.blogHomeVerTodo      || 'Ir al blog completo',
   };
 
   return (
@@ -190,6 +199,67 @@ export default function Home() {
               <Link to="/portafolio" className="inline-flex items-center gap-4 text-xs font-black uppercase tracking-widest text-on-surface hover:text-primary transition-all group">
                 Explorar portafolio completo <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* BLOG / NOTICIAS (RECIENTES) */}
+      {blogPosts.length > 0 && (
+        <section className="py-32 bg-background relative overflow-hidden">
+          <div className="px-8 max-w-7xl mx-auto relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8"
+            >
+              <div className="max-w-2xl">
+                <span className="text-primary font-bold tracking-[0.4em] text-[10px] uppercase mb-4 block">{t.blogLabel}</span>
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-on-surface font-headline leading-none">{t.blogTitulo}</h2>
+                <p className="mt-8 text-on-surface-variant text-xl font-medium">{t.blogDesc}</p>
+              </div>
+              <Link to="/blog" className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary hover:gap-5 transition-all">
+                {t.blogVerTodo} <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogPosts.map((post, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group"
+                >
+                  <Link to={`/blog/${post.slug?.current}`} className="block glass border border-outline-variant/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-500 shadow-sm hover:shadow-premium">
+                    {post.imagenPortada && (
+                      <div className="h-48 overflow-hidden">
+                        <img 
+                          src={urlFor(post.imagenPortada).width(600).height(400).fit('crop').url()} 
+                          alt={post.titulo} 
+                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" 
+                        />
+                      </div>
+                    )}
+                    <div className="p-8">
+                      <div className="flex items-center gap-2 text-primary text-[9px] font-black uppercase tracking-widest mb-4">
+                        <Zap className="w-3 h-3" /> {post.categoria}
+                      </div>
+                      <h3 className="text-xl font-black font-headline mb-4 tracking-tight group-hover:text-primary transition-colors line-clamp-2">{post.titulo}</h3>
+                      <p className="text-sm text-on-surface-variant leading-relaxed line-clamp-2 mb-6">{post.resumen}</p>
+                      <div className="pt-6 border-t border-outline-variant/10 flex items-center justify-between">
+                         <span className="text-[10px] font-bold text-on-surface-variant/40">{new Date(post.fechaPublicacion).toLocaleDateString('es-MX', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                         <span className="text-primary group-hover:translate-x-2 transition-transform">
+                            <ArrowRight className="w-4 h-4" />
+                         </span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>

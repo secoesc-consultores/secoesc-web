@@ -12,6 +12,8 @@ import Contact from './pages/Contact';
 import Portal from './pages/Portal';
 import SpecialtyDetail from './pages/SpecialtyDetail';
 import Portfolio from './pages/Portfolio';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 export default function App() {
   useEffect(() => {
@@ -41,6 +43,8 @@ export default function App() {
             <Route path="/ingenieria" element={<Engineering />} />
             <Route path="/contacto" element={<Contact />} />
             <Route path="/portal" element={<Portal />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
           </Routes>
         </main>
         <Footer />

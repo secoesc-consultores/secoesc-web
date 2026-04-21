@@ -79,6 +79,7 @@ export default function Footer() {
     navServicios:        ui?.footerNavServicios        || 'Portafolio Técnico',
     navPortafolio:       ui?.footerNavPortafolio       || 'Proyectos',
     navIngenieria:       ui?.footerNavIngenieria       || 'Ingeniería Avanzada',
+    navBlog:             ui?.footerNavBlog             || 'Blog',
     navContacto:         ui?.footerNavContacto         || 'Contacto',
     tituloEspecialidades:ui?.footerTituloEspecialidades|| 'Especialidades',
     tituloOficina:       ui?.footerTituloOficina       || 'Oficina Central',
@@ -143,6 +144,7 @@ export default function Footer() {
                 { to: "/servicios", label: t.navServicios },
                 { to: "/portafolio", label: t.navPortafolio },
                 { to: "/ingenieria", label: t.navIngenieria },
+                { to: "/blog", label: t.navBlog },
                 { to: "/contacto", label: t.navContacto },
               ].map((link, i) => (
                 <li key={i}>

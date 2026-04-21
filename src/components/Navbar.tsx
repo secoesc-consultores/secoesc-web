@@ -30,6 +30,7 @@ export default function Navbar() {
     servicios:  ui?.navServicios || 'Servicios',
     portafolio: ui?.navPortafolio|| 'Portafolio',
     ingenieria: ui?.navIngenieria|| 'Ingeniería',
+    blog:       ui?.navBlog      || 'Blog',
     contacto:   ui?.navContacto  || 'Contacto',
   } : null;
 
@@ -39,6 +40,7 @@ export default function Navbar() {
     { name: t.servicios, path: '/servicios' },
     { name: t.portafolio, path: '/portafolio' },
     { name: t.ingenieria, path: '/ingenieria' },
+    { name: t.blog, path: '/blog' },
   ] : [];
 
   return (

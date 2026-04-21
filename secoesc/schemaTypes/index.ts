@@ -24,6 +24,9 @@ import s09_ventaja from './s09_ventaja'
 // PÁGINA: CONTACTO
 import s11_contacto from './s11_contacto'
 
+// PÁGINA: BLOG
+import s15_blog from './s15_blog'
+
 // TRANSVERSALES
 import s12_cta from './s12_cta'
 import s14_textos_ui from './s14_textos_ui'
@@ -46,6 +49,9 @@ export const schemaTypes = [
   s08_trayectoria,
   s09_ventaja,
   s11_contacto,
+
+  // Blog
+  s15_blog,
 
   // Globales
   s12_cta,

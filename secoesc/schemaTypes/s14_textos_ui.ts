@@ -18,6 +18,7 @@ export default {
     { name: 'contacto',    title: '⑥ Página Contacto' },
     { name: 'especialidad',title: '⑦ Detalle de Especialidad' },
     { name: 'footer',      title: '⑧ Footer' },
+    { name: 'blog',        title: '⑨ Blog' },
   ],
 
   fields: [
@@ -46,6 +47,11 @@ export default {
     {
       name: 'navIngenieria',    type: 'string', title: 'Enlace: Ingeniería',
       group: 'nav', initialValue: 'Ingeniería',
+      validation: (Rule: any) => Rule.required().max(40),
+    },
+    {
+      name: 'navBlog',          type: 'string', title: 'Enlace: Blog',
+      group: 'nav', initialValue: 'Blog',
       validation: (Rule: any) => Rule.required().max(40),
     },
     {
@@ -359,6 +365,12 @@ export default {
       name: 'footerNavIngenieria',
       type: 'string', title: 'Footer enlace: Ingeniería Avanzada',
       group: 'footer', initialValue: 'Ingeniería Avanzada',
+      validation: (Rule: any) => Rule.required().max(40),
+    },
+    {
+      name: 'footerNavBlog',
+      type: 'string', title: 'Footer enlace: Blog / Noticias',
+      group: 'footer', initialValue: 'Blog',
       validation: (Rule: any) => Rule.required().max(40),
     },
     {
